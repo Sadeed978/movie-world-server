@@ -56,8 +56,29 @@ async function run() {
         const result = await moviesCollection.findOne(qurey);
         res.send(result);
       });
+      
+     // app.post('/moviesByCategory',async(req,res)=>{
+       // const category =req.body.category;
+       // const qurey ={category:category};
+      //  const cursor =moviesCollection.find(qurey);
+       // const result = await cursor.toArray();
+       // res.send(result);
+     // });
 
-     
+     app.post('/moviesMycollection',async(req,res)=>{
+        const email =req.body.email;
+        const qurey ={email:email};
+        const cursor =moviesCollection.find(qurey);
+        const result = await cursor.toArray();
+        res.send(result);
+      });
+      app.get('/moviesMycollection',async(req,res)=>{
+        const email =req.query.email;
+        const qurey ={email:email};
+        const cursor =moviesCollection.find(qurey);
+        const result = await cursor.toArray();
+        res.send(result);
+      });
 
       app.delete('/movies/:id',async(req,res)=>{
         const id =req.params.id;
