@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.port||3000
 
@@ -50,12 +50,24 @@ async function run() {
         res.send(result);
       });
 
-      app.get('/moviesById/:id',async(req,res)=>{
-        const id =req.query.id;
-        const qurey ={_id:new ObjectId(id)};
-        const result = await moviesCollection.findOne(qurey);
+      app.get('/highRatedMovies',async(req,res)=>{
+        const cursor =moviesCollection.find().sort({rating:1}).limit(5);
+        const result = await cursor.toArray();
         res.send(result);
       });
+
+      app.get('/moviesById/:id', async (req, res) => {
+        try {
+          const id = req.params.id; 
+          const query = { _id: new ObjectId(id) }; 
+          const result = await moviesCollection.findOne(query);
+          res.send(result);
+        } catch (error) {
+          console.error(error);
+          res.status(500).send({ error: 'Invalid ID or server error' });
+        }
+      });
+      
       
      // app.post('/moviesByCategory',async(req,res)=>{
        // const category =req.body.category;
