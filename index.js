@@ -48,24 +48,24 @@ async function run() {
         res.send(result);
       });
 
-     // app.put('/movies/:id',async(req,res)=>{
-       // const id =req.params.id;
-       // const updatedMovie =req.body;
-       // const filter ={_id:id};
-        //const options ={upsert:true};
-        //const updateDoc ={
-           // $set:{
-               // title:updatedMovie.title,
-               // director:updatedMovie.director,
-               // genre:updatedMovie.genre,
-               // releaseYear:updatedMovie.releaseYear,
-               // rating:updatedMovie.rating,
-              //  posterUrl:updatedMovie.posterUrl
-          //  },
-       // };
-       // const result = await moviesCollection.updateOne(filter,updateDoc,options);
-      //  res.send(result);
-    //  });
+     /app.put('/movies/:id',async(req,res)=>{
+        const id =req.params.id;
+        const updatedMovie =req.body;
+        const filter ={_id:id};
+        const options ={upsert:true};
+        const updateDoc ={
+            $set:{
+                title:updatedMovie.title,
+                director:updatedMovie.director,
+                genre:updatedMovie.genre,
+                releaseYear:updatedMovie.releaseYear,
+                rating:updatedMovie.rating,
+                posterUrl:updatedMovie.posterUrl
+            },
+        };
+        const result = await moviesCollection.updateOne(filter,updateDoc,options);
+        res.send(result);
+     });
 
       app.delete('/movies/:id',async(req,res)=>{
         const id =req.params.id;
