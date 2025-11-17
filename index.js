@@ -50,9 +50,9 @@ async function run() {
         res.send(result);
       });
 
-      app.get('/moviesById',async(req,res)=>{
+      app.get('/moviesById/:id',async(req,res)=>{
         const id =req.query.id;
-        const qurey ={_id:id};
+        const qurey ={_id:new ObjectId(id)};
         const result = await moviesCollection.findOne(qurey);
         res.send(result);
       });
@@ -65,13 +65,15 @@ async function run() {
        // res.send(result);
      // });
 
-     app.post('/moviesMycollection',async(req,res)=>{
-        const email =req.body.email;
-        const qurey ={email:email};
-        const cursor =moviesCollection.find(qurey);
-        const result = await cursor.toArray();
-        res.send(result);
-      });
+     //app.get('/moviesByCategory',async(req,res)=>{
+       // const category =req.query.category;
+        //const qurey ={category:category};
+       // const cursor =moviesCollection.find(qurey);
+       // const result = await cursor.toArray();
+       // res.send(result);
+      //});
+
+    //
       app.get('/moviesMycollection',async(req,res)=>{
         const email =req.query.email;
         const qurey ={email:email};
