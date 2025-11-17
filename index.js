@@ -23,37 +23,76 @@ app.get('/', (req, res) => {
 
 async function run() {
     try {
-      
       await client.connect();
       const usersDB = client.db('users');
-      const usersCollection =usersDB.collection('users')
-      const database = client.db("AllMovies");
-      const moviesCollection = database.collection("movies");
+      const usersCollection =usersDB.collection('users');
+      const moviesDB = client.db('movies');
+      const moviesCollection =moviesDB .collection('movies');
+
+      app.post('/movies',async(req,res)=>{
+        const newMovie =req.body;
+        const result = await moviesCollection.insertOne(newMovie);
+        res.send(result);
+      });
+
+     // app.get('/movies',async(req,res)=>{
+       // const cursor =moviesCollection.find();
+       // const result = await cursor.toArray();
+       // res.send(result);
+     // });
+
+     // app.get('/moviesById',async(req,res)=>{
+       // const id =req.query.id;
+       // const qurey ={_id:id};
+       // const result = await moviesCollection.findOne(qurey);
+       // res.send(result);
+     // });
+
+     // app.put('/movies/:id',async(req,res)=>{
+       // const id =req.params.id;
+       // const updatedMovie =req.body;
+       // const filter ={_id:id};
+        //const options ={upsert:true};
+        //const updateDoc ={
+           // $set:{
+               // title:updatedMovie.title,
+               // director:updatedMovie.director,
+               // genre:updatedMovie.genre,
+               // releaseYear:updatedMovie.releaseYear,
+               // rating:updatedMovie.rating,
+              //  posterUrl:updatedMovie.posterUrl
+          //  },
+       // };
+       // const result = await moviesCollection.updateOne(filter,updateDoc,options);
+      //  res.send(result);
+    //  });
+
+      app.delete('/movies/:id',async(req,res)=>{
+        const id =req.params.id;
+        const qurey ={_id:id};
+        const result = await moviesCollection.deleteOne(qurey);
+        res.send(result);
+      });
       
-      app.post('/Movies',async(req,res)=>{
-         const newMovies =req.body;
-         const result = await moviesCollection.insertOne(newMovies);
-         res.send(result);
-      })
       app.post('/users',async(req,res)=>{
         const newUser =req.body;
         const email =req.body.email;
-        const qurey ={email:email}
-        const existingUser =await usersCollection.findOne(qurey)
+        const qurey ={email:email};
+        const existingUser =await usersCollection.findOne(qurey);
         if (existingUser){
             res.send( 'Already exist')
         }else{
             const result = await usersCollection.insertOne(newUser);
-        res.send(result);
+            res.send(result);
         }
-
-     })
+        
+     });
 
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
       
-      await client.close();
+     
     }
   }
   run().catch(console.dir);
