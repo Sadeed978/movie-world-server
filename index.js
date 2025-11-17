@@ -35,18 +35,18 @@ async function run() {
         res.send(result);
       });
 
-     // app.get('/movies',async(req,res)=>{
-       // const cursor =moviesCollection.find();
-       // const result = await cursor.toArray();
-       // res.send(result);
-     // });
+      app.get('/movies',async(req,res)=>{
+        const cursor =moviesCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      });
 
-     // app.get('/moviesById',async(req,res)=>{
-       // const id =req.query.id;
-       // const qurey ={_id:id};
-       // const result = await moviesCollection.findOne(qurey);
-       // res.send(result);
-     // });
+      app.get('/moviesById',async(req,res)=>{
+        const id =req.query.id;
+        const qurey ={_id:id};
+        const result = await moviesCollection.findOne(qurey);
+        res.send(result);
+      });
 
      // app.put('/movies/:id',async(req,res)=>{
        // const id =req.params.id;
