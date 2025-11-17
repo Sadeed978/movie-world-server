@@ -35,6 +35,15 @@ async function run() {
         res.send(result);
       });
 
+      app.post('/moviesById',async(req,res)=>{
+        const ids =req.body;
+        const objectIds = ids.map(id => id);
+        const qurey ={_id: { $in: objectIds } };
+        const cursor =moviesCollection.find(qurey);
+        const result = await cursor.toArray();
+        res.send(result);
+      });
+
       app.get('/movies',async(req,res)=>{
         const cursor =moviesCollection.find();
         const result = await cursor.toArray();
@@ -48,24 +57,7 @@ async function run() {
         res.send(result);
       });
 
-     /app.put('/movies/:id',async(req,res)=>{
-        const id =req.params.id;
-        const updatedMovie =req.body;
-        const filter ={_id:id};
-        const options ={upsert:true};
-        const updateDoc ={
-            $set:{
-                title:updatedMovie.title,
-                director:updatedMovie.director,
-                genre:updatedMovie.genre,
-                releaseYear:updatedMovie.releaseYear,
-                rating:updatedMovie.rating,
-                posterUrl:updatedMovie.posterUrl
-            },
-        };
-        const result = await moviesCollection.updateOne(filter,updateDoc,options);
-        res.send(result);
-     });
+     
 
       app.delete('/movies/:id',async(req,res)=>{
         const id =req.params.id;
