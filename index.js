@@ -54,6 +54,7 @@ async function run() {
             res.send( 'Already added to watchlist')}
         else{
             const result = await watchlistCollection.insertOne(movie);
+            console.log(result);
             res.send(result);
         }});
       app.get('/watchlist',async(req,res)=>{
@@ -61,6 +62,7 @@ async function run() {
         const qurey ={email:email};
         const cursor =watchlistCollection.find(qurey);
         const result = await cursor.toArray();
+        
         res.send(result);
         
       });
