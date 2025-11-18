@@ -27,7 +27,9 @@ async function run() {
       const usersDB = client.db('users');
       const usersCollection =usersDB.collection('users');
       const moviesDB = client.db('movies');
-      const moviesCollection =moviesDB .collection('movies');
+      const moviesCollection =moviesDB.collection('movies');
+      const watchlistDB = client.db('movieWatchlists');
+      const watchlistCollection =watchlistDB.collection('watchlist');
 
       app.post('/movies',async(req,res)=>{
         const newMovie =req.body;
@@ -44,6 +46,31 @@ async function run() {
         res.send(result);
       });
 
+      app.post('/watchlist',async(req,res)=>{
+        const movie =req.body;
+        const query ={movieId:movie.movieId,email:movie.email};
+        const existingMovie =await watchlistCollection.findOne(query);
+        if (existingMovie){
+            res.send( 'Already added to watchlist')}
+        else{
+            const result = await watchlistCollection.insertOne(movie);
+            res.send(result);
+        }});
+      app.get('/watchlist',async(req,res)=>{
+        const email =req.query.email;
+        const qurey ={email:email};
+        const cursor =watchlistCollection.find(qurey);
+        const result = await cursor.toArray();
+        res.send(result);
+        
+      });
+      app.delete('/watchlist/:id',async(req,res)=>{
+        const id =req.params.id;
+        const qurey = { _id: new ObjectId(id) };
+        const result = await watchlistCollection.deleteOne(qurey);
+        res.send(result);
+      });
+
       app.get('/movies',async(req,res)=>{
         const cursor =moviesCollection.find();
         const result = await cursor.toArray();
@@ -51,7 +78,12 @@ async function run() {
       });
 
       app.get('/highRatedMovies',async(req,res)=>{
-        const cursor =moviesCollection.find().sort({rating:1}).limit(5);
+        const cursor =moviesCollection.find().sort({rating:1}).limit(6);
+        const result = await cursor.toArray();
+        res.send(result);
+      });
+      app.get('/latestMovies',async(req,res)=>{
+        const cursor =moviesCollection.find().sort({releaseDate:-1}).limit(6);
         const result = await cursor.toArray();
         res.send(result);
       });
@@ -68,6 +100,33 @@ async function run() {
         }
       });
       
+      app.put('/movies/:id', async (req, res) => {
+        const id = req.params.id;
+        const email = req.query.email;    // user email from frontend
+        const updatedMovie = req.body;
+      
+        const filter = { 
+          _id: new ObjectId(id),
+          email: email                   // only owner can update
+        };
+      
+        const updateDoc = {
+          $set: {
+            movieName: updatedMovie.movieName,
+            photo: updatedMovie.photo,
+            rating: updatedMovie.rating,
+            publishYear: updatedMovie.publishYear
+          }
+        };
+      
+        const result = await moviesCollection.updateOne(filter, updateDoc);
+      
+        if (result.matchedCount === 0) {
+          return res.status(403).send({ message: "Unauthorized!" });
+        }
+      
+        res.send(result);
+      });
       
      // app.post('/moviesByCategory',async(req,res)=>{
        // const category =req.body.category;
@@ -92,11 +151,13 @@ async function run() {
         const cursor =moviesCollection.find(qurey);
         const result = await cursor.toArray();
         res.send(result);
+        
       });
+      
 
       app.delete('/movies/:id',async(req,res)=>{
         const id =req.params.id;
-        const qurey ={_id:id};
+        const qurey = { _id: new ObjectId(id) };
         const result = await moviesCollection.deleteOne(qurey);
         res.send(result);
       });
