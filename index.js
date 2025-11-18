@@ -28,8 +28,7 @@ async function run() {
       const usersCollection =usersDB.collection('users');
       const moviesDB = client.db('movies');
       const moviesCollection =moviesDB.collection('movies');
-      const watchlistDB = client.db('movieWatchlists');
-      const watchlistCollection =watchlistDB.collection('watchlist');
+      const watchlistCollection =moviesDB.collection('watchlist');
 
       app.post('/movies',async(req,res)=>{
         const newMovie =req.body;
@@ -48,6 +47,7 @@ async function run() {
 
       app.post('/watchlist',async(req,res)=>{
         const movie =req.body;
+        console.log(movie);
         const query ={movieId:movie.movieId,email:movie.email};
         const existingMovie =await watchlistCollection.findOne(query);
         if (existingMovie){
