@@ -79,6 +79,22 @@ async function run() {
         res.send(result);
       });
 
+      app.get('/movies',async(req,res)=>{
+        const {genres,minrating,maxRating} =req.query;
+        const query ={};
+        if (genres){
+            query.genres = {$in: genres.split(',')};
+        }
+        if (minrating && maxRating){
+            query.rating ={$gte: parseFloat(minrating)};
+        }
+        try {
+           const movies= await moviesCollection.find(query).toArray();
+            res.send(movies);
+      } catch (error) {
+        res.status(500).send({error: 'An error occurred while fetching movies.'});
+      }});
+
       app.get('/highRatedMovies',async(req,res)=>{
         const cursor =moviesCollection.find().sort({rating:1}).limit(6);
         const result = await cursor.toArray();
@@ -175,8 +191,13 @@ async function run() {
             const result = await usersCollection.insertOne(newUser);
             res.send(result);
         }
-        
-     });
+
+   });
+      app.get('/users',async(req,res)=>{
+        const cursor =usersCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+      });
 
       await client.db("admin").command({ ping: 1 });
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
